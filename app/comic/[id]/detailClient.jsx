@@ -1,34 +1,26 @@
+// app/comic/[id]/ComicDetailClient.jsx
 'use client';
 
+import { useState } from 'react';
+import Link from 'next/link';
 import { Navbar } from '@/components/navbar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { ShoppingCart, Calendar, Tag, Users } from 'lucide-react';
-import { useState } from 'react';
 
-
-export default function ComicDetailClient({ initialComic }) {
+export default function ComicDetailClient({ initialComic, relatedComics = [] }) {
   const [comic] = useState(initialComic);
   const [isZoomed, setIsZoomed] = useState(false);
 
-  if (!comic) {
-    return (
-      <div className="min-h-screen">
-        <Navbar />
-        <div className="container mx-auto px-4 py-8 text-center">
-          <p>Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
   const addToCart = () => {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existingItem = cart.find((item) => item.id === comic.id);
+    const raw = localStorage.getItem('cart') || '[]';
+    const cart = JSON.parse(raw);
 
-    if (existingItem) {
-      existingItem.quantity += 1;
+    const existing = cart.find((item) => String(item.id) === String(comic.id));
+
+    if (existing) {
+      existing.quantity += 1;
     } else {
       cart.push({ ...comic, quantity: 1 });
     }
@@ -41,9 +33,11 @@ export default function ComicDetailClient({ initialComic }) {
   return (
     <div className="min-h-screen">
       <Navbar />
+
       <div className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-2 gap-12">
-          {/* Comic Cover */}
+
+          {/* COVER IMAGE */}
           <div className="space-y-4">
             <div
               className={`relative overflow-hidden rounded-xl border-4 border-primary/50 transition-transform duration-300 ${
@@ -57,29 +51,26 @@ export default function ComicDetailClient({ initialComic }) {
                 alt={comic.title}
                 className="w-full h-auto object-cover"
               />
+
               {comic.featured && (
                 <Badge className="absolute top-4 right-4 bg-secondary text-secondary-foreground text-lg px-4 py-2">
                   FEATURED
                 </Badge>
               )}
             </div>
+
             <p className="text-sm text-muted-foreground text-center">Hover to zoom</p>
           </div>
 
-          {/* Comic Details */}
+          {/* DETAILS */}
           <div className="space-y-6">
             <div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance">{comic.title}</h1>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">{comic.title}</h1>
+
               <div className="flex flex-wrap gap-2 mb-4">
-                <Badge variant="outline" className="text-base px-3 py-1">
-                  {comic.publisher}
-                </Badge>
-                <Badge variant="outline" className="text-base px-3 py-1">
-                  {comic.genre}
-                </Badge>
-                <Badge variant="outline" className="text-base px-3 py-1">
-                  {comic.character}
-                </Badge>
+                <Badge variant="outline">{comic.publisher}</Badge>
+                <Badge variant="outline">{comic.genre}</Badge>
+                {comic.character && <Badge variant="outline">{comic.character}</Badge>}
               </div>
             </div>
 
@@ -89,6 +80,7 @@ export default function ComicDetailClient({ initialComic }) {
                   <span className="text-5xl font-bold text-primary">₹{comic.price}</span>
                   <span className="text-muted-foreground">INR</span>
                 </div>
+
                 <Button onClick={addToCart} size="lg" className="w-full text-lg font-bold">
                   <ShoppingCart className="mr-2 h-5 w-5" />
                   ₹{comic.price} - Add to Cart
@@ -97,11 +89,13 @@ export default function ComicDetailClient({ initialComic }) {
             </Card>
 
             <div className="space-y-4">
+              {/* SYNOPSIS */}
               <div>
                 <h2 className="text-2xl font-bold mb-3">Synopsis</h2>
-                <p className="text-lg text-muted-foreground leading-relaxed text-pretty">{comic.description}</p>
+                <p className="text-lg text-muted-foreground leading-relaxed">{comic.description}</p>
               </div>
 
+              {/* INFO CARDS */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Card>
                   <CardContent className="p-4 flex items-center gap-3">
@@ -122,7 +116,7 @@ export default function ComicDetailClient({ initialComic }) {
                         {new Date(comic.releaseDate).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
-                          day: 'numeric',
+                          day: 'numeric'
                         })}
                       </p>
                     </div>
@@ -153,16 +147,33 @@ export default function ComicDetailClient({ initialComic }) {
           </div>
         </div>
 
-        {/* Related Comics */}
+        {/* RELATED COMICS */}
         <div className="mt-16">
           <h2 className="text-3xl font-bold mb-6">More from {comic.publisher}</h2>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/** adjust import to access comicsData if you want related items client-side,
-             * or pass related comics as prop from server to avoid importing on client. */}
+            {relatedComics.map((rc) => (
+              <Card key={rc.id} className="group overflow-hidden hover:shadow-xl transition-all">
+                <Link href={`/comic/${rc.id}`}>
+                  <div className="relative overflow-hidden bg-muted aspect-[3/4]">
+                    <img
+                      src={rc.coverImage || '/placeholder.svg'}
+                      alt={rc.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                  </div>
+
+                  <CardContent className="p-4">
+                    <h3 className="font-bold line-clamp-1">{rc.title}</h3>
+                    <p className="text-xl font-bold text-primary mt-2">₹{rc.price}</p>
+                  </CardContent>
+                </Link>
+              </Card>
+            ))}
           </div>
         </div>
+
       </div>
     </div>
   );
 }
- 

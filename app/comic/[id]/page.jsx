@@ -1,18 +1,23 @@
+// app/comic/[id]/page.jsx
 import { notFound } from 'next/navigation';
 import { comicsData } from '@/lib/comics-data';
-import ComicDetailClient from './detailClient';
+import ComicDetailClient from './ComicDetailClient';
 
 export async function generateStaticParams() {
-  // return an array like: [{ id: '1' }, { id: '2' }, ... ]
   return comicsData.map((c) => ({ id: String(c.id) }));
 }
 
 export default function Page({ params }) {
-  const comic = comicsData.find((c) => String(c.id) === String(params.id));
+  const id = String(params.id);
+  const comic = comicsData.find((c) => String(c.id) === id);
+
   if (!comic) {
     notFound();
   }
 
-  // pass the comic as initial data to the client component
-  return <ComicDetailClient initialComic={comic} />;
+  const relatedComics = comicsData
+    .filter((c) => c.publisher === comic.publisher && String(c.id) !== id)
+    .slice(0, 4);
+
+  return <ComicDetailClient initialComic={comic} relatedComics={relatedComics} />;
 }

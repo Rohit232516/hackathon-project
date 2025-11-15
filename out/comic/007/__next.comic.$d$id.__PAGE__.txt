@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+3:I[97367,["/hackathon-project/_next/static/chunks/ff1a16fafef87110.js","/hackathon-project/_next/static/chunks/247eb132b7f7b574.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"JJDiZJWkpCsEZo60in2bh","rsc":["$","$1","c",{"children":["$L2",[["$","script","script-0",{"src":"/hackathon-project/_next/static/chunks/851e3ddf5a8049f6.js","async":true}],["$","script","script-1",{"src":"/hackathon-project/_next/static/chunks/1ff8c92efcbf5b4a.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null
+2:E{"digest":"NEXT_HTTP_ERROR_FALLBACK;404"}
