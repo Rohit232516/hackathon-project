@@ -1,7 +1,7 @@
 // app/comic/[id]/page.jsx
 import { notFound } from 'next/navigation';
 import { comicsData } from '@/lib/comics-data';
-import ComicDetailClient from './ComicDetailClient';
+import ComicDetailClient from './detailClient';
 
 export async function generateStaticParams() {
   return comicsData.map((c) => ({ id: String(c.id) }));
