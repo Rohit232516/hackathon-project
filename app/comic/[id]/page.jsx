@@ -9,6 +9,11 @@ import { ShoppingCart, Calendar, Tag, Users } from 'lucide-react';
 import { notFound, useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
+export async function generateStaticParams() {
+  // return an array like: [{ id: '1' }, { id: '2' }, ... ]
+  return comicsData.map((c) => ({ id: String(c.id) }));
+}
+
 export default function ComicDetailPage() {
   const params = useParams();
   const [comic, setComic] = useState(null);
